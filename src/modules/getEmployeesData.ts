@@ -12,19 +12,22 @@ const getEmployeesData = async (employees: IEmployee[]): Promise<IResponse[]> =>
     let employeeData: IResponse;
     for await (const employee of employees) {
       const result: ICountryDetails = await getCountryDetails(employee.country);
-      employeeData = {
-        ...employee,
-        countryDetails: {
-          country: result.country,
-          currency: result.currency,
-          languages: result.languages,
-          timezones: result.timezones,
-        },
-      };
-      if (regions.includes(result.region.toLowerCase())) {
-        logger.info(result.region);
-        username = `${employee.firstName}${employee.lastName}${employee.dateOfBirth.split('/').join('')}`;
-        employeeData.username = username;
+      if (result.errorCode && result.errorCode === 'ERR404') {
+        employeeData = { ...employee, countryDetails: {} };
+      } else {
+        employeeData = {
+          ...employee,
+          countryDetails: {
+            country: result.country,
+            currency: result.currency,
+            languages: result.languages,
+            timezones: result.timezones,
+          },
+        };
+        if (regions.includes(result.region.toLowerCase())) {
+          username = `${employee.firstName}${employee.lastName}${employee.dateOfBirth.split('/').join('')}`;
+          employeeData.username = username;
+        }
       }
       employeesData.push(employeeData);
     }

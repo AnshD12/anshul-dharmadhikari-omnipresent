@@ -1,10 +1,10 @@
+import 'dotenv/config';
+
 import express, { Application } from 'express';
 
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
 import routes from './routes/routes';
 
-dotenv.config();
 const app: Application = express();
 
 app.use(bodyParser.json({ limit: '5mb' }));
