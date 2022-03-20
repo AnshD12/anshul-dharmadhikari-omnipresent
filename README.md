@@ -1,69 +1,60 @@
-For this task you are given a list of employees. The output of the task is an endpoint which returns the same list of employees but with the relevant country specific information added to each employee.
+# Omnipresent backend end challenge
 
-[Rest countries](https://restcountries.com) ****is a free API which you can use to retrieve details for a country.
+## steps to run the project
 
-The country specific information we would like to be present on an employee is:
+### prerequisite
 
-- Full name of country
-- Currency used in the country
-- Language/s of the country
-- Timezone/s for the country
+1. git
+2. node v12.22.7 or above
+3. npm v8.5.1
 
-We would also like employees in Asia and Europe regions to have an additional identifier which takes the form of `{firstName}{lastName}{dateOfBirth}`. So for Joe Bloggs born 19/07/1990 this would be `joebloggs19071990`. Please bear in mind that the regions which require this may change in the future.
+### env file
 
-How the data is structured on the resulting employee object is up to you but please explain your decisions in the Readme.
+Before running the application please rename .env.example to .env
 
-Feel free to make any assumptions you see fit but please explain/clarify your thinking in the Readme.
+### via docker
 
-The framework/libraries/language you use is up to you but please ensure you write some tests. Our current tech stack is viewable [here](https://stackshare.io/omnipresent/omnipresent) if you would like some inspiration.
+1. git clone https://github.com/AnshD12/anshul-dharmadhikari-omnipresent.git
+2. docker-compose up
 
-[
-   {
-      "firstName":"Roy",
-      "lastName":"Testerton",
-      "dateOfBirth":"19/02/1990",
-      "jobTitle":"Software developer",
-      "company":"Test co",
-      "country":"US"
-   },
-   {
-      "firstName":"Lisa",
-      "lastName":"Testora",
-      "dateOfBirth":"11/07/1984",
-      "jobTitle":"CTO",
-      "company":"Test co",
-      "country":"GBR"
-   },
-   {
-      "firstName":"Simon",
-      "lastName":"McTester",
-      "dateOfBirth":"01/11/1987",
-      "jobTitle":"Product manager",
-      "company":"Mock industries",
-      "country":"IND"
-   },
-   {
-      "firstName":"Selina",
-      "lastName":"Testo",
-      "dateOfBirth":"23/11/1972",
-      "jobTitle":"Software developer",
-      "company":"Mock industries",
-      "country":"IND"
-   },
-   {
-      "firstName":"Tim",
-      "lastName":"Mockman",
-      "dateOfBirth":"12/11/1972",
-      "jobTitle":"Software developer",
-      "company":"Mock industries",
-      "country":"IND"
-   },
-   {
-      "firstName":"Melissa",
-      "lastName":"Mocker",
-      "dateOfBirth":"10/01/1982",
-      "jobTitle":"Software developer",
-      "company":"Mock industries",
-      "country":"US"
-   }
-]
+### via npm
+
+1. git clone https://github.com/AnshD12/anshul-dharmadhikari-omnipresent.git
+2. npm install
+3. npm start
+4. for testing - npm run test
+
+### endpoints
+
+1. Health check - http://localhost:3000/health
+2. POST employees - http://localhost:3000/employees
+
+### curl for POST /employees API
+
+curl --location --request POST 'http://localhost:3000/employees' \
+--header 'Content-Type: application/json' \
+--data-raw '[
+{
+"firstName":"Roy",
+"lastName":"Fernandez",
+"dateOfBirth":"19/02/1990",
+"jobTitle":"Software developer",
+"company":"Test co",
+"country":"CA"
+}
+]'
+
+### response of the API
+
+I have added 2 keys to response object apart from the actual data sent in the body
+
+1. countryDetails - contains all the data mention in the task(country's full name, currency, languages and timezone)
+2. username - if the employee is from Europe/Asia
+
+### implementation
+
+Application is a simple typescript project that uses redis as a cache for storing result from country API.
+As there can be multiple employees from same country it would be bad practice to call country API for each candidate.
+So we are calling the country API for a specific country once and store in cache for faster calculation and response time.
+
+for unit test I have used jest library.
